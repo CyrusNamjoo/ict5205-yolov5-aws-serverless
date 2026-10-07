@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   ICT5205 Assessment 2 - YOLOv5 object identification on AWS
   (S3 + Lambda container image + API Gateway + DynamoDB).
-  Author: Sirous (Cyrus) Namjoo - student 240344.
+  Author: Sirous Namjoo - student 240344.
   Recreates the whole serverless stack from one template. The container image
   must already be in ECR (see build_and_push.sh).
 

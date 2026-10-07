@@ -1,6 +1,6 @@
 # Serverless YOLOv5 Object Detection on AWS
 
-**ICT5205 Cloud Computing – Assessment 2** · Sirous (Cyrus) Namjoo · Student 240344
+**ICT5205 Cloud Computing – Assessment 2** · Sirous Namjoo · Student 240344
 
 An image object identification service built from AWS managed services. A client sends the S3 location of an image to a REST API; a Lambda function running **YOLOv5s** detects the objects, stores an annotated copy and a JSON result in S3, writes a summary record to DynamoDB, and returns the detections.
 

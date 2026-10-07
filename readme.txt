@@ -1,7 +1,7 @@
 ICT5205 Cloud Computing - Assessment 2
 Implementing an Image Object Identification System on AWS using YOLOv5, Lambda, API Gateway and Amazon S3
 
-Name:            Sirous (Cyrus) Namjoo
+Name:            Sirous Namjoo
 Student number:  240344
 Institution:     Apex Australia Higher Education - Master of Information Systems (Data Analytics)
 

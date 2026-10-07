@@ -1,6 +1,6 @@
 """
 ICT5205 Assessment 2 - API Gateway test & load-test client
-Author: Sirous (Cyrus) Namjoo - student 240344
+Author: Sirous Namjoo - student 240344
 
 Uses only the Python standard library (no pip install needed).
 

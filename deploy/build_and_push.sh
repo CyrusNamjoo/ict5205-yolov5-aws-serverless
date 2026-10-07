@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ICT5205 Assessment 2 - build the YOLOv5 Lambda container image and push it to ECR.
-# Author: Sirous (Cyrus) Namjoo - student 240344
+# Author: Sirous Namjoo - student 240344
 #
 # Run on a Linux x86_64 machine with Docker and the AWS CLI (we used the EC2
 # instance yolo-ec2, Ubuntu, m7i-flex.large). The ECR repository must already

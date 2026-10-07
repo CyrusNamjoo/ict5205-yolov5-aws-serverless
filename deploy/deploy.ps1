@@ -1,5 +1,5 @@
 # ICT5205 Assessment 2 - deploy the whole YOLOv5 detection stack with CloudFormation.
-# Author: Sirous (Cyrus) Namjoo - student 240344
+# Author: Sirous Namjoo - student 240344
 #
 # Requirements: AWS CLI v2 configured with an admin user, Python 3 (for the test),
 #               the container image already pushed to ECR (build_and_push.sh).

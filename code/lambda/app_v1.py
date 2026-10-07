@@ -1,6 +1,6 @@
 """
 ICT5205 Assessment 2 - YOLOv5 object identification on AWS Lambda
-Author: Sirous (Cyrus) Namjoo - student 240344
+Author: Sirous Namjoo - student 240344
 
 Flow:
   API Gateway (POST /detect, JSON body {"key": "images/x.jpg"})
