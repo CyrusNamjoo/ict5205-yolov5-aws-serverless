@@ -1,0 +1,21 @@
+n,image,status,latency_ms,cold_start,init_ms,inference_ms,lambda_total_ms,objects,detail
+1,images/000000000025.jpg,200,7735.5,True,6054,234.4,445.1,2,{'giraffe': 2} cold=True inf=234.4ms
+2,images/000000000034.jpg,200,7418.7,True,5963,234.0,461.9,1,{'zebra': 1} cold=True inf=234.0ms
+3,images/000000000072.jpg,200,6492.2,True,5150,229.2,425.6,2,{'giraffe': 2} cold=True inf=229.2ms
+4,images/000000000081.jpg,200,682.9,False,0,184.1,405.3,1,{'airplane': 1} cold=False inf=184.1ms
+5,images/000000000110.jpg,200,7992.3,True,6184,268.6,498.3,22,"{'person': 10, 'chair': 3, 'dining table': 1, 'pizza': 2, 'knife': 2, 'cup': 4} cold=True inf=268.6ms"
+6,images/000000000113.jpg,200,461.7,False,0,182.1,356.9,14,"{'person': 3, 'cup': 6, 'cake': 1, 'knife': 1, 'chair': 2, 'dining table': 1} cold=False inf=182.1ms"
+7,images/000000000165.jpg,200,486.9,False,0,246.6,395.2,3,"{'tie': 1, 'person': 2} cold=False inf=246.6ms"
+8,images/000000000247.jpg,200,408.1,False,0,166.1,314.2,4,"{'car': 1, 'airplane': 2, 'person': 1} cold=False inf=166.1ms"
+9,images/000000000471.jpg,200,418.0,False,0,165.3,302.7,1,{'bus': 1} cold=False inf=165.3ms
+10,images/000000000532.jpg,200,438.7,False,0,171.5,325.4,5,"{'person': 2, 'bus': 3} cold=False inf=171.5ms"
+11,images/000000000025.jpg,200,433.4,False,0,169.6,312.2,2,{'giraffe': 2} cold=False inf=169.6ms
+12,images/000000000034.jpg,200,424.9,False,0,167.7,325.4,1,{'zebra': 1} cold=False inf=167.7ms
+13,images/000000000072.jpg,200,480.0,False,0,196.7,369.2,2,{'giraffe': 2} cold=False inf=196.7ms
+14,images/000000000081.jpg,200,403.8,False,0,185.9,296.3,1,{'airplane': 1} cold=False inf=185.9ms
+15,images/000000000110.jpg,200,407.8,False,0,187.9,322.2,22,"{'person': 10, 'chair': 3, 'dining table': 1, 'pizza': 2, 'knife': 2, 'cup': 4} cold=False inf=187.9ms"
+16,images/000000000113.jpg,200,383.3,False,0,155.8,276.2,14,"{'person': 3, 'cup': 6, 'cake': 1, 'knife': 1, 'chair': 2, 'dining table': 1} cold=False inf=155.8ms"
+17,images/000000000165.jpg,200,466.5,False,0,231.5,375.5,3,"{'tie': 1, 'person': 2} cold=False inf=231.5ms"
+18,images/000000000247.jpg,200,386.7,False,0,175.1,295.9,4,"{'car': 1, 'airplane': 2, 'person': 1} cold=False inf=175.1ms"
+19,images/000000000471.jpg,200,404.0,False,0,167.4,303.3,1,{'bus': 1} cold=False inf=167.4ms
+20,images/000000000532.jpg,200,547.0,False,0,336.5,457.7,5,"{'person': 2, 'bus': 3} cold=False inf=336.5ms"

@@ -1,0 +1,2 @@
+n,image,status,latency_ms,retries,cold_start,init_ms,inference_ms,lambda_total_ms,objects,detail
+1,images/000000000025.jpg,200,508.6,0,False,0,171.8,342.9,2,{'giraffe': 2} cold=False inf=171.8ms

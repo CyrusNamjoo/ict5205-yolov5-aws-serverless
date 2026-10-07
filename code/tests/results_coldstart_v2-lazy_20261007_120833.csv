@@ -1,0 +1,7 @@
+label,round,type,status,client_ms,cold_start,init_ms,model_load_ms,inference_ms,lambda_total_ms,load_mode,version
+v2-lazy,1,cold,200,9248.5,True,205,6654,238.6,7268.3,lazy,v2
+v2-lazy,1,warm,200,417.7,False,0,0,183.8,322.2,lazy,v2
+v2-lazy,2,cold,200,8354.2,True,222,6308,244.3,6790.0,lazy,v2
+v2-lazy,2,warm,200,422.4,False,0,0,185.2,318.1,lazy,v2
+v2-lazy,3,cold,200,7540.6,True,224,5931,242.9,6408.5,lazy,v2
+v2-lazy,3,warm,200,433.0,False,0,0,191.2,342.4,lazy,v2

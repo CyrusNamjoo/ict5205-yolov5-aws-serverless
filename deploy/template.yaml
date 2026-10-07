@@ -1,0 +1,332 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  ICT5205 Assessment 2 - YOLOv5 object identification on AWS
+  (S3 + Lambda container image + API Gateway + DynamoDB).
+  Author: Sirous (Cyrus) Namjoo - student 240344.
+  Recreates the whole serverless stack from one template. The container image
+  must already be in ECR (see build_and_push.sh).
+
+Parameters:
+  Suffix:
+    Type: String
+    Default: "240344"
+    AllowedPattern: "^[a-z0-9-]{3,30}$"
+    Description: Lower-case suffix that makes bucket / table / API names unique (e.g. 240344-cfn)
+  ImageUri:
+    Type: String
+    Description: ECR image URI, e.g. 123456789012.dkr.ecr.ap-southeast-2.amazonaws.com/yolo-lambda:v2
+  MemorySize:
+    Type: Number
+    Default: 3008
+    AllowedValues: [1024, 2048, 3008]
+    Description: Lambda memory (CPU scales with memory; 3008 MB was fastest per dollar in testing)
+  ModelLoad:
+    Type: String
+    Default: eager
+    AllowedValues: [eager, lazy]
+    Description: eager = load YOLOv5 during init (fastest cold start in tests); lazy = on first request
+  ConfThreshold:
+    Type: String
+    Default: "0.25"
+    Description: YOLOv5 confidence threshold
+
+Resources:
+  # ------------------------------------------------------------------ storage
+  InputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "yolo-input-${Suffix}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+            BucketKeyEnabled: true
+      Tags:
+        - Key: project
+          Value: yolo-assignment
+
+  OutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "yolo-output-${Suffix}"
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+            BucketKeyEnabled: true
+      Tags:
+        - Key: project
+          Value: yolo-assignment
+
+  DetectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "yolo-detections-${Suffix}"
+      AttributeDefinitions:
+        - AttributeName: image_key
+          AttributeType: S
+        - AttributeName: processed_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: image_key
+          KeyType: HASH
+        - AttributeName: processed_at
+          KeyType: RANGE
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: project
+          Value: yolo-assignment
+
+  # DynamoDB auto scaling (target tracking at 70 % utilisation, 1-10 units)
+  TableWriteScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub "table/${DetectionsTable}"
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+
+  TableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "yolo-detections-${Suffix}-write-scaling"
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref TableWriteScalingTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+
+  TableReadScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: !Sub "table/${DetectionsTable}"
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+
+  TableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "yolo-detections-${Suffix}-read-scaling"
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref TableReadScalingTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+
+  # ------------------------------------------------------------------ compute
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "yolo-lambda-role-${Suffix}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: yolo-lambda-access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ReadInputImages
+                Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub "${InputBucket.Arn}/*"
+              - Sid: ListInputSoMissingKeysReturn404
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt InputBucket.Arn
+              - Sid: WriteResults
+                Effect: Allow
+                Action: s3:PutObject
+                Resource:
+                  - !Sub "${OutputBucket.Arn}/results/*"
+                  - !Sub "${OutputBucket.Arn}/annotated/*"
+              - Sid: WriteDetectionItems
+                Effect: Allow
+                Action: dynamodb:PutItem
+                Resource: !GetAtt DetectionsTable.Arn
+
+  DetectorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "yolo-detector-${Suffix}"
+      Description: YOLOv5s object detection (container image)
+      PackageType: Image
+      Code:
+        ImageUri: !Ref ImageUri
+      Architectures: [x86_64]
+      Role: !GetAtt LambdaRole.Arn
+      MemorySize: !Ref MemorySize
+      Timeout: 60
+      EphemeralStorage:
+        Size: 512
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Ref InputBucket
+          OUTPUT_BUCKET: !Ref OutputBucket
+          TABLE_NAME: !Ref DetectionsTable
+          CONF_THRESHOLD: !Ref ConfThreshold
+          MODEL_LOAD: !Ref ModelLoad
+      Tags:
+        - Key: project
+          Value: yolo-assignment
+
+  DetectorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${DetectorFunction}"
+      RetentionInDays: 14
+
+  # ------------------------------------------------------------------ API
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub "yolo-detection-api-${Suffix}"
+      Description: YOLOv5 object detection - ICT5205
+      EndpointConfiguration:
+        Types: [REGIONAL]
+
+  DetectRequestModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      RestApiId: !Ref RestApi
+      Name: DetectRequest
+      ContentType: application/json
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: DetectRequest
+        type: object
+        required: [key]
+        properties:
+          key:
+            type: string
+            minLength: 1
+            maxLength: 1024
+          bucket:
+            type: string
+
+  BodyValidator:
+    Type: AWS::ApiGateway::RequestValidator
+    Properties:
+      RestApiId: !Ref RestApi
+      Name: validate-body
+      ValidateRequestBody: true
+      ValidateRequestParameters: false
+
+  DetectResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: detect
+
+  DetectPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref DetectResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      RequestValidatorId: !Ref BodyValidator
+      RequestModels:
+        application/json: !Ref DetectRequestModel
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        TimeoutInMillis: 29000
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DetectorFunction.Arn}/invocations"
+
+  ApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DetectorFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/detect"
+
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: DetectPostMethod
+    Properties:
+      RestApiId: !Ref RestApi
+
+  ProdStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref RestApi
+      DeploymentId: !Ref ApiDeployment
+      StageName: prod
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          ThrottlingRateLimit: 5
+          ThrottlingBurstLimit: 5
+
+  ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub "yolo-key-${Suffix}"
+      Enabled: true
+
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: !Sub "yolo-basic-plan-${Suffix}"
+      ApiStages:
+        - ApiId: !Ref RestApi
+          Stage: !Ref ProdStage
+      Throttle:
+        RateLimit: 5
+        BurstLimit: 5
+      Quota:
+        Limit: 1000
+        Period: DAY
+
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref UsagePlan
+
+Outputs:
+  ApiUrl:
+    Description: POST endpoint (send header x-api-key and body {"key":"images/<file>.jpg"})
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/detect"
+  ApiKeyId:
+    Description: Get the key value with  aws apigateway get-api-key --api-key <id> --include-value
+    Value: !Ref ApiKey
+  InputBucketName:
+    Value: !Ref InputBucket
+  OutputBucketName:
+    Value: !Ref OutputBucket
+  TableName:
+    Value: !Ref DetectionsTable
+  FunctionName:
+    Value: !Ref DetectorFunction

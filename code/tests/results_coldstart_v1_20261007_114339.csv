@@ -1,0 +1,7 @@
+label,round,type,status,client_ms,cold_start,init_ms,model_load_ms,inference_ms,lambda_total_ms,load_mode,version
+v1,1,cold,200,7517.6,True,6102,,241.5,486.0,eager(v1),v1
+v1,1,warm,200,442.2,False,0,,193.9,309.9,eager(v1),v1
+v1,2,cold,200,7350.6,True,6076,,238.7,440.4,eager(v1),v1
+v1,2,warm,200,426.7,False,0,,188.5,307.9,eager(v1),v1
+v1,3,cold,200,6080.2,True,4845,,335.5,522.1,eager(v1),v1
+v1,3,warm,200,467.1,False,0,,265.0,375.8,eager(v1),v1

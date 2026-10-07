@@ -1,0 +1,41 @@
+n,image,status,latency_ms,cold_start,init_ms,inference_ms,lambda_total_ms,objects,detail
+1,images/000000000025.jpg,200,739.3,False,0,186.1,394.4,2,{'giraffe': 2} cold=False inf=186.1ms
+2,images/000000000034.jpg,500,354.0,,,,,,Internal server error
+3,images/000000000072.jpg,200,730.8,False,0,177.8,388.4,2,{'giraffe': 2} cold=False inf=177.8ms
+4,images/000000000081.jpg,500,352.7,,,,,,Internal server error
+5,images/000000000110.jpg,500,336.2,,,,,,Internal server error
+6,images/000000000113.jpg,200,7895.2,True,6170,436.2,649.9,14,"{'person': 3, 'cup': 6, 'cake': 1, 'knife': 1, 'chair': 2, 'dining table': 1} cold=True inf=436.2ms"
+7,images/000000000165.jpg,200,628.3,False,0,234.4,441.7,3,"{'tie': 1, 'person': 2} cold=False inf=234.4ms"
+8,images/000000000247.jpg,200,7423.9,True,6035,239.9,449.5,4,"{'car': 1, 'airplane': 2, 'person': 1} cold=True inf=239.9ms"
+9,images/000000000471.jpg,500,134.0,,,,,,Internal server error
+10,images/000000000532.jpg,500,133.6,,,,,,Internal server error
+11,images/000000000025.jpg,500,145.4,,,,,,Internal server error
+12,images/000000000034.jpg,500,131.8,,,,,,Internal server error
+13,images/000000000072.jpg,500,138.3,,,,,,Internal server error
+14,images/000000000081.jpg,200,6800.7,True,5434,310.3,506.8,1,{'airplane': 1} cold=True inf=310.3ms
+15,images/000000000110.jpg,500,140.4,,,,,,Internal server error
+16,images/000000000113.jpg,500,139.2,,,,,,Internal server error
+17,images/000000000165.jpg,200,558.8,False,0,232.3,431.9,3,"{'tie': 1, 'person': 2} cold=False inf=232.3ms"
+18,images/000000000247.jpg,200,528.3,False,0,187.4,402.2,4,"{'car': 1, 'airplane': 2, 'person': 1} cold=False inf=187.4ms"
+19,images/000000000471.jpg,200,7624.5,True,6233,233.4,441.5,1,{'bus': 1} cold=True inf=233.4ms
+20,images/000000000532.jpg,200,10065.0,True,8440,313.0,530.1,5,"{'person': 2, 'bus': 3} cold=True inf=313.0ms"
+21,images/000000000025.jpg,500,91.6,,,,,,Internal server error
+22,images/000000000034.jpg,500,88.2,,,,,,Internal server error
+23,images/000000000072.jpg,500,86.4,,,,,,Internal server error
+24,images/000000000081.jpg,500,87.9,,,,,,Internal server error
+25,images/000000000110.jpg,500,95.0,,,,,,Internal server error
+26,images/000000000113.jpg,500,95.6,,,,,,Internal server error
+27,images/000000000165.jpg,500,89.6,,,,,,Internal server error
+28,images/000000000247.jpg,500,91.6,,,,,,Internal server error
+29,images/000000000471.jpg,500,89.8,,,,,,Internal server error
+30,images/000000000532.jpg,500,86.5,,,,,,Internal server error
+31,images/000000000025.jpg,500,85.9,,,,,,Internal server error
+32,images/000000000034.jpg,500,84.5,,,,,,Internal server error
+33,images/000000000072.jpg,500,88.0,,,,,,Internal server error
+34,images/000000000081.jpg,500,95.0,,,,,,Internal server error
+35,images/000000000110.jpg,500,102.5,,,,,,Internal server error
+36,images/000000000113.jpg,500,94.3,,,,,,Internal server error
+37,images/000000000165.jpg,500,88.6,,,,,,Internal server error
+38,images/000000000247.jpg,500,89.2,,,,,,Internal server error
+39,images/000000000471.jpg,500,87.9,,,,,,Internal server error
+40,images/000000000532.jpg,500,85.8,,,,,,Internal server error

@@ -1,0 +1,22 @@
+# --- secrets: never commit ---
+AWS Credentials/
+*.pem
+*accessKeys*.csv
+*credentials*.csv
+.env
+
+# --- large / third-party data (download links are in README) ---
+coco128/
+yolov5/
+*.pt
+
+# --- course material and private drafts ---
+Assignment 2 - *.pdf
+Rubrics for *.pdf
+Screenshots/
+
+# --- Python / OS clutter ---
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

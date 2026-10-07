@@ -1,0 +1,9 @@
+test,expected,status,result,latency_ms,detail
+valid request,200,200,PASS,7660.3,"{'person': 10, 'chair': 3, 'dining table': 1, 'pizza': 2, 'knife': 2, 'cup': 4} cold=True inf=337.8ms"
+no API key,403,403,PASS,87.4,Forbidden
+wrong API key,403,403,PASS,73.8,Forbidden
+missing 'key' field,400,400,PASS,84.3,Invalid request body
+body is not JSON,400,400,PASS,77.3,Invalid request body
+image does not exist,404,404,PASS,127.5,s3://yolo-input-240344/images/nope.jpg does not exist
+unsupported file type,400,400,PASS,92.2,"Unsupported file type; allowed: ['.bmp', '.jpeg', '.jpg', '.png', '.webp']"
+bucket not allowed,400,400,PASS,104.3,Bucket 'someone-else' is not allowed; use 'yolo-input-240344'
