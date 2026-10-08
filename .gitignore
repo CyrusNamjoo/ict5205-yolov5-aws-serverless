@@ -15,6 +15,16 @@ Assignment 2 - *.pdf
 Rubrics for *.pdf
 Screenshots/
 
+# --- submission files kept out of the public repo ---
+ICT5205_A2_Report_*.docx
+ICT5205_A2_Report_*.pdf
+*_notes_recording.pptx
+*.mp4
+
+# --- Office lock / temp files ---
+~$*
+~WRL*.tmp
+
 # --- Python / OS clutter ---
 __pycache__/
 *.pyc
