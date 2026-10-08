@@ -22,6 +22,8 @@ Live API (POST, header x-api-key required):
   https://dqepoan9na.execute-api.ap-southeast-2.amazonaws.com/prod/detect
 Source code repository:
   https://github.com/CyrusNamjoo/ict5205-yolov5-aws-serverless
+Video presentation (YouTube, unlisted):
+  https://youtu.be/gefXwNfvRNg
 Public dataset (COCO128, 128 images from COCO 2017, 80 classes):
   https://github.com/ultralytics/assets/releases/download/v0.0.0/coco128.zip
 YOLOv5 (model and code):

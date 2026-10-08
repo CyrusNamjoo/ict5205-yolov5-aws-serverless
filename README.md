@@ -18,6 +18,10 @@ Build path:  EC2 (Ubuntu, YOLOv5 install + test, docker build) ──push──�
 Monitoring:  CloudWatch Logs (structured JSON) + metrics
 ```
 
+## Video presentation
+
+<https://youtu.be/gefXwNfvRNg>
+
 ## Live endpoint
 
 `POST https://dqepoan9na.execute-api.ap-southeast-2.amazonaws.com/prod/detect`
